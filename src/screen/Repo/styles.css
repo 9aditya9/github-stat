@@ -1,0 +1,19 @@
+.user-input{
+    width: 300px;
+    height: 100%;
+    border: none;
+    outline: none;
+    font-size: 1.5em;
+    padding: 0.5em;
+    border-radius: 0.5em;
+    background-color: #f2f2f2;
+}
+.repo-container{
+    padding: 20px;
+    /* background-color: pink; */
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    margin-top: 50px;
+    flex-wrap: wrap;
+}
