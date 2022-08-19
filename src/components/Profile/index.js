@@ -7,7 +7,6 @@ const Profile = ({ username }) => {
   const [timer, setTimer] = React.useState("");
 
   function debounce(func, timeout = 600) {
-    // console.log("hello", func);
     return (...args) => {
       clearTimeout(timer);
       const t = setTimeout(func, timeout);
