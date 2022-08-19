@@ -4,6 +4,7 @@ import { GetRepos, fetchRepos } from "../../services/RepoService";
 import { GetTags } from "../../services/RepoService";
 import "./styles.css";
 import ReactPaginate from "react-paginate";
+import RingLoader from "react-spinners/RingLoader";
 
 const Repo = ({username = "9aditya9"}) => {
   const [repos, setRepos] = React.useState([
@@ -13,8 +14,10 @@ const Repo = ({username = "9aditya9"}) => {
     },
   ]);
   const [timer, setTimer] = React.useState("");
+  const[loading, setLoading] = React.useState(false);
   const[pageCount, setPageCount] = React.useState(1);
   const[currentPage, setCurrentPage] = React.useState(1);
+  const[errorOccured, setErrorOccured] = React.useState(false);
   let limit = 10;
 
   // debounce function
@@ -31,16 +34,20 @@ const Repo = ({username = "9aditya9"}) => {
         console.log(data)
         setPageCount(data.last);
         setRepos(data.data);
+        setLoading(true);
+        setErrorOccured(false);
       })
       .catch((err) => {
+        setLoading(true);
+        setErrorOccured(true);
         console.log(err);
       });
   }
   const handleDebounce = debounce(handleApiCall);
 
   React.useEffect(() => {
+    setLoading(false);
     handleDebounce();
-    setCurrentPage(1);
   }, [username]);
 
 
@@ -62,11 +69,21 @@ const Repo = ({username = "9aditya9"}) => {
 
   // pagination functionality
   const handlePageClick = async (data) => {
+    setLoading(false);
     console.log(data)
     setCurrentPage(data.selected);
     const selectedPage = data.selected + 1;
-    const reposFromServer = await fetchRepos({ username, limit, selectedPage });
-    setRepos(reposFromServer);
+    await fetchRepos({ username, limit, selectedPage })
+      .then((data) => {
+        setRepos(data);
+        setLoading(true);
+        setErrorOccured(false);
+      }).catch((err) => {
+        setLoading(true);
+        setErrorOccured(true);
+        console.log(err);
+      }
+      );
   }
 
 
@@ -75,7 +92,7 @@ const Repo = ({username = "9aditya9"}) => {
   return (
     <div>
       <div className="repo-container" style={{backgroundColor: 'white'}}>
-        {repos.map((repo) => (
+        {loading ? errorOccured ? (<h1>Kindly check the username</h1>):repos.map((repo) => (
           <Card
             key={repo.id}
             repo={repo}
@@ -86,7 +103,7 @@ const Repo = ({username = "9aditya9"}) => {
             time={String(repo.created_at).split("T")[0]}
             topics={repo.topics}
           />
-        ))}
+        )): <RingLoader />}
       </div>
       <div>
         <ReactPaginate 
@@ -107,7 +124,6 @@ const Repo = ({username = "9aditya9"}) => {
         breakClassName={"page-item"}
         breakLinkClassName={"page-link"}
         activeClassName={"active"}
-
         />
 
       </div>
