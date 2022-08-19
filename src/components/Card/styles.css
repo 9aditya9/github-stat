@@ -1,7 +1,7 @@
 .card-container {
     background-color: rgba(0, 0, 0, 0.342);
     color: white;
-    min-width: 450px;
+    min-width: 300px;
     width: 525px;
     max-width: 600px;
     padding: 20px;
@@ -15,23 +15,37 @@
     flex-wrap: wrap;
 
 }
+
+.card-container:hover{
+    background-color: rgba(129, 129, 129, 0.342);
+    box-shadow: 0 4px 30px rgba(240, 238, 238, 0.2);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
 .card-title{
-    font-size: 30px;
+    font-size: 22px;
     font-weight: bold;
     padding: 0px;
     margin: 0px;
     color: rgb(118, 219, 143);
 }
 
-.card-tags {
+.card-tags-container{
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
+    justify-content: flex-start;
     align-items: center;
     flex-wrap: wrap;
-    margin-top: 10px;
-    background-color: rgb(8, 41, 65);
+}
+.card-tags {
+    /* background-color: rgb(14, 61, 95); */
+    background-color: transparent;
+    border: 1px solid;
+    border-color: rgba(118, 219, 143, 0.5);
     padding: 0.5em;
     border-radius: 10px;
     color: #fff;
+    font-size: 1em;
+    margin:0.1em;
+
 }

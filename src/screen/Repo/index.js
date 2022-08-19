@@ -1,21 +1,24 @@
 import React from "react";
 import Card from "../../components/Card";
-import { GetRepos } from "../../services/RepoService";
+import { GetRepos, fetchRepos } from "../../services/RepoService";
 import { GetTags } from "../../services/RepoService";
 import "./styles.css";
+import ReactPaginate from "react-paginate";
 
-const Repo = () => {
+const Repo = ({username = "9aditya9"}) => {
   const [repos, setRepos] = React.useState([
     {
       name: "",
       description: "",
-    }
+    },
   ]);
-  const [username, setUsername] = React.useState("9aditya9");
   const [timer, setTimer] = React.useState("");
-  
+  const[pageCount, setPageCount] = React.useState(1);
+  const[currentPage, setCurrentPage] = React.useState(1);
+  let limit = 10;
+
+  // debounce function
   function debounce(func, timeout = 600) {
-    // console.log("hello", func);
     return (...args) => {
       clearTimeout(timer);
       const t = setTimeout(func, timeout);
@@ -25,7 +28,9 @@ const Repo = () => {
   async function handleApiCall() {
     await GetRepos({ username })
       .then((data) => {
-        setRepos(data);
+        console.log(data)
+        setPageCount(data.last);
+        setRepos(data.data);
       })
       .catch((err) => {
         console.log(err);
@@ -35,31 +40,39 @@ const Repo = () => {
 
   React.useEffect(() => {
     handleDebounce();
+    setCurrentPage(1);
   }, [username]);
 
-  const handleChange = (e) => {
-    if (e.target.value) {
-      setUsername(e.target.value);
-    } else {
-      setUsername("9aditya9");
-    }
-  };
-  
-  const handleTag = (tags_url) => {
-    console.log(tags_url);
-    GetTags({ link: tags_url })
-      .then((data) => {
-        console.log(data);
-      })
-      .catch((err) => {
-        console.log(err);
-      }
-      );
+
+  // getting tags of the specific repo
+  // const handleTag = (tags_url) => {
+  //   console.log(tags_url);
+  //   GetTags({ link: tags_url })
+  //     .then((data) => {
+  //       console.log(data);
+  //       return data;
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // };
+
+
+
+
+  // pagination functionality
+  const handlePageClick = async (data) => {
+    console.log(data)
+    setCurrentPage(data.selected);
+    const selectedPage = data.selected + 1;
+    const reposFromServer = await fetchRepos({ username, limit, selectedPage });
+    setRepos(reposFromServer);
   }
+
+
 
   return (
     <div>
-      <input className="user-input" onChange={handleChange} label="username"></input>
       <div className="repo-container">
         {repos.map((repo) => (
           <Card
@@ -67,9 +80,33 @@ const Repo = () => {
             repo={repo}
             name={repo.name}
             desc={repo.description}
-            tags={handleTag(repo.tags_url)}
+            // tags={handleTag(repo.tags_url)}
+            topics={repo.topics}
           />
         ))}
+      </div>
+      <div>
+        <ReactPaginate 
+        previousLabel={"prev"}
+        nextLabel={"next"}
+        breakLabel={"..."}
+        pageCount={pageCount}
+        marginPagesDisplayed={2}
+        pageRangeDisplayed={3}
+        onPageChange={handlePageClick}
+        containerClassName={"pagination-container"}
+        pageClassName={"page-item"}
+        pageLinkClassName={"page-link"}
+        previousClassName={"page-item"}
+        previousLinkClassName={"page-link"}
+        nextClassName={"page-item"}
+        nextLinkClassName={"page-link"}
+        breakClassName={"page-item"}
+        breakLinkClassName={"page-link"}
+        activeClassName={"active"}
+
+        />
+
       </div>
     </div>
   );

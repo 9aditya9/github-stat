@@ -1,16 +1,20 @@
 import React from "react";
 import "./styles.css";
 
-const Card = ({ name, desc, tags = [{ name: "Card" }] }) => {
+const Card = ({ name, desc, tags = [], topics=[]}) => {
   return (
     <div className="card-container">
-      <h3 className="card-title">{name}</h3>
+      <h4 className="card-title">
+        {name}
+        </h4>
       <p>{desc}</p>
-      <div>
-        {/* {tags.map((tag) => (
-            <button key={tag.name} className="card-tags">{tag.name}</button>
-          ))} */}
-        <button className="card-tags">Card</button>
+      <div className="card-tags-container">
+        {topics.map((name, index) => (
+          <button key={index} className="card-tags">
+            {name}
+          </button>
+        ))}
+        {/* <button className="card-tags">Card</button> */}
       </div>
     </div>
   );
