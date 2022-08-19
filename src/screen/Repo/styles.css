@@ -13,11 +13,15 @@
     color: white;
 }
 .repo-container{
+    width: 100%;
+    height: 100%;
     display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
+    /* justify-content: space-evenly; */
     margin-top: 50px;
+    flex-direction: row;
     flex-wrap: wrap;
+    padding: 0px;
+    margin: 0px;
 }
 .pagination-container {
     display: flex;
@@ -35,11 +39,13 @@
     /* margin: 10px; */
     padding: 0.5em;
     border-radius: 0.5em;
-    background-color: #4a8cb8;
-    border: 1px solid lightblue;
+    background-color: black;
+    border: 1px solid rgb(25, 28, 29);
     margin: 0.5em;
     color: #fff;
     cursor: pointer;
+    padding: 0.4em 0.8em;
+    font-size: 1.2em;
 }
 .active {
     background-color: #fff;

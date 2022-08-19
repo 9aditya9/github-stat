@@ -70,10 +70,11 @@ const Repo = ({username = "9aditya9"}) => {
   }
 
 
+ 
 
   return (
     <div>
-      <div className="repo-container">
+      <div className="repo-container" style={{backgroundColor: 'white'}}>
         {repos.map((repo) => (
           <Card
             key={repo.id}
@@ -81,6 +82,8 @@ const Repo = ({username = "9aditya9"}) => {
             name={repo.name}
             desc={repo.description}
             // tags={handleTag(repo.tags_url)}
+            // time={handleTime(repo.created_at)}
+            time={String(repo.created_at).split("T")[0]}
             topics={repo.topics}
           />
         ))}
