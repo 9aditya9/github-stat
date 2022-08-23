@@ -1,12 +1,13 @@
 import React from "react";
 import Card from "../../components/Card";
 import { GetRepos, fetchRepos } from "../../services/RepoService";
-import { GetTags } from "../../services/RepoService";
+// import { GetTags } from "../../services/RepoService";
 import "./styles.css";
 import ReactPaginate from "react-paginate";
 import RingLoader from "react-spinners/RingLoader";
+import Pagination from "../Pagination";
 
-const Repo = ({username = "9aditya9"}) => {
+const Repo = ({ username = "9aditya9" }) => {
   const [repos, setRepos] = React.useState([
     {
       name: "",
@@ -14,10 +15,10 @@ const Repo = ({username = "9aditya9"}) => {
     },
   ]);
   const [timer, setTimer] = React.useState("");
-  const[loading, setLoading] = React.useState(false);
-  const[pageCount, setPageCount] = React.useState(1);
-  const[currentPage, setCurrentPage] = React.useState(1);
-  const[errorOccured, setErrorOccured] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  const [pageCount, setPageCount] = React.useState(1);
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const [errorOccured, setErrorOccured] = React.useState(false);
   let limit = 10;
 
   // debounce function
@@ -31,7 +32,7 @@ const Repo = ({username = "9aditya9"}) => {
   async function handleApiCall() {
     await GetRepos({ username })
       .then((data) => {
-        console.log(data)
+        console.log(data);
         setPageCount(data.last);
         setRepos(data.data);
         setLoading(true);
@@ -40,6 +41,7 @@ const Repo = ({username = "9aditya9"}) => {
       .catch((err) => {
         setLoading(true);
         setErrorOccured(true);
+        setPageCount(0);
         console.log(err);
       });
   }
@@ -47,9 +49,10 @@ const Repo = ({username = "9aditya9"}) => {
 
   React.useEffect(() => {
     setLoading(false);
+    setCurrentPage(0);
+    // console.log("cp" + currentPage);
     handleDebounce();
   }, [username]);
-
 
   // getting tags of the specific repo
   // const handleTag = (tags_url) => {
@@ -64,13 +67,10 @@ const Repo = ({username = "9aditya9"}) => {
   //     });
   // };
 
-
-
-
   // pagination functionality
   const handlePageClick = async (data) => {
     setLoading(false);
-    console.log(data)
+    console.log(data);
     setCurrentPage(data.selected);
     const selectedPage = data.selected + 1;
     await fetchRepos({ username, limit, selectedPage })
@@ -78,55 +78,46 @@ const Repo = ({username = "9aditya9"}) => {
         setRepos(data);
         setLoading(true);
         setErrorOccured(false);
-      }).catch((err) => {
+      })
+      .catch((err) => {
         setLoading(true);
         setErrorOccured(true);
         console.log(err);
-      }
-      );
-  }
-
-
- 
+      });
+  };
 
   return (
     <div>
-      <div className="repo-container" style={{backgroundColor: 'white'}}>
-        {loading ? errorOccured ? (<h1>Kindly check the username</h1>):repos.map((repo) => (
-          <Card
-            key={repo.id}
-            repo={repo}
-            name={repo.name}
-            desc={repo.description}
-            // tags={handleTag(repo.tags_url)}
-            // time={handleTime(repo.created_at)}
-            time={String(repo.created_at).split("T")[0]}
-            topics={repo.topics}
-          />
-        )): <RingLoader />}
+      <div className="repo-container" style={{ backgroundColor: "white" }}>
+        {loading ? (
+          errorOccured ? (
+            <h1>Kindly check the username</h1>
+          ) : (
+            repos.map((repo) => (
+              <Card
+                key={repo.id}
+                repo={repo}
+                name={repo.name}
+                desc={repo.description}
+                // tags={handleTag(repo.tags_url)}
+                time={String(repo.created_at).split("T")[0]}
+                topics={repo.topics}
+              />
+            ))
+          )
+        ) : (
+          <RingLoader />
+        )}
       </div>
-      <div>
-        <ReactPaginate 
-        previousLabel={"prev"}
-        nextLabel={"next"}
-        breakLabel={"..."}
-        pageCount={pageCount}
-        marginPagesDisplayed={2}
-        pageRangeDisplayed={3}
-        onPageChange={handlePageClick}
-        containerClassName={"pagination-container"}
-        pageClassName={"page-item"}
-        pageLinkClassName={"page-link"}
-        previousClassName={"page-item"}
-        previousLinkClassName={"page-link"}
-        nextClassName={"page-item"}
-        nextLinkClassName={"page-link"}
-        breakClassName={"page-item"}
-        breakLinkClassName={"page-link"}
-        activeClassName={"active"}
+      {pageCount > 1 ? (
+        <Pagination
+          pagecount={pageCount}
+          currentpage={currentPage}
+          handlepagechange={handlePageClick}
         />
+      ) : null}
 
-      </div>
+
     </div>
   );
 };
